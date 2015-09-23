@@ -141,13 +141,13 @@ angular.module('jkuri.touchspin', [])
 		template: 
 		'<div class="input-group">' +
 		'  <span class="input-group-btn" ng-show="!verticalButtons">' +
-		'    <button class="btn btn-default" ng-mousedown="startSpinDown()" ng-mouseup="stopSpin()"><i class="fa fa-minus"></i></button>' +
+		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinDown()" ng-mouseup="stopSpin()"><i class="fa fa-minus"></i></button>' +
 		'  </span>' +
 		'  <span class="input-group-addon" ng-show="prefix" ng-bind="prefix"></span>' +
 		'  <input type="text" ng-model="val" class="form-control" ng-blur="checkValue()" ng-focus="focus()">' +
 		'  <span class="input-group-addon" ng-show="postfix" ng-bind="postfix"></span>' +
 		'  <span class="input-group-btn" ng-show="!verticalButtons">' +
-		'    <button class="btn btn-default" ng-mousedown="startSpinUp()" ng-mouseup="stopSpin()"><i class="fa fa-plus"></i></button>' +
+		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinUp()" ng-mouseup="stopSpin()"><i class="fa fa-plus"></i></button>' +
 		'  </span>' +
 		'</div>'
 	};
