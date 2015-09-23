@@ -1,7 +1,11 @@
-angular.module('jkuri.touchspin', [])
+'use strict';
 
-.directive('ngTouchSpin', ['$timeout', '$interval', '$document', function($timeout, $interval, $document) {
-	'use strict';
+angular.module('jkuri.touchspin', [])
+  .provider('ngTouchSpin', ngTouchSpinProvider)
+  .directive('ngTouchSpin', ngTouchSpinDirective);
+
+ngTouchSpinDirective.$inject = ['$timeout', '$interval', '$document', 'ngTouchSpin'];
+function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 
 	var key_codes = {
 		left  : 37,
@@ -119,23 +123,25 @@ angular.module('jkuri.touchspin', [])
 				scope.val = ngModel.$viewValue;
 			};
 
-			$body.bind('keydown', function(event) {
-				if (!scope.focused) {
-					return;
-				}
+      if (ngTouchSpin.arrowControlsEnabled()) {
+        $body.bind('keydown', function(event) {
+          if (!scope.focused) {
+            return;
+          }
 
-				event.preventDefault();
+          event.preventDefault();
 
-				var which = event.which;
+          var which = event.which;
 
-				if (which === key_codes.right) {
-					scope.increment();
-				} else if (which === key_codes.left) {
-					scope.decrement();
-				}
+          if (which === key_codes.right) {
+            scope.increment();
+          } else if (which === key_codes.left) {
+            scope.decrement();
+          }
 
-				scope.$apply();
-			});
+          scope.$apply();
+        });
+      }
 
 		},
 		template: 
@@ -151,5 +157,28 @@ angular.module('jkuri.touchspin', [])
 		'  </span>' +
 		'</div>'
 	};
+}
 
-}]);
+function ngTouchSpinProvider() {
+  var arrowControlsEnabled = true;
+
+  /**
+   * @ngdoc method
+   * @name ngTouchSpinProvider#arrowControlsEnabled
+   * @description
+   * @param {boolean=} flag enable or disable arrow controls
+   * @returns {*} current value if used as getter or itself (chaining) if used as setter
+   */
+  this.arrowControlsEnabled = function(flag) {
+    if (angular.isDefined(flag)) {
+      arrowControlsEnabled = flag;
+      return this;
+    } else {
+      return arrowControlsEnabled;
+    }
+  };
+
+  this.$get = function () {
+    return this;
+  };
+}
