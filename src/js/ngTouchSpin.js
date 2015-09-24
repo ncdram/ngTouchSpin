@@ -13,8 +13,8 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 	};
 
 	var setScopeValues = function (scope, attrs) {
-		scope.min = attrs.min || 0;
-		scope.max = attrs.max || 100;
+		scope.min = parseFloat(Number(attrs.min)) || 0;
+		scope.max = parseFloat(Number(attrs.max)) || 100;
 		scope.step = attrs.step || 1;
 		scope.prefix = attrs.prefix || undefined;
 		scope.postfix = attrs.postfix || undefined;
