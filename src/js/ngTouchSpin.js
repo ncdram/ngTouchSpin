@@ -115,6 +115,35 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 				scope.focused = false;
 			};
 
+      scope.updateValue = function  () {
+        var newValue = scope.val;
+
+        if (newValue !== '') {
+          if (newValue.match(/^-?(?:\d+|\d*\.\d+)$/i)) {
+            newValue = parseFloat(newValue);
+            if (newValue < parseFloat(scope.min)) newValue = parseFloat(scope.min);
+            if (newValue > parseFloat(scope.max)) newValue = parseFloat(scope.max);
+            newValue = newValue.toFixed(scope.decimals);
+          } else {
+            newValue = oldval;
+          }
+          scope.val = newValue;
+          ngModel.$setViewValue(newValue);
+        }
+
+        console.log({newValue: newValue, val: scope.val, modelValue: ngModel.$modelValue});
+      };
+
+      /**
+       * I have no idea what is causing it but the modelValue gets overwritten to an empty string.
+       * Change it back into the current value if it does!
+       */
+      function modelChanged() {
+        console.log({modelValue: ngModel.$modelValue, val: scope.val});
+        if (ngModel.$modelValue == '' && scope.val) ngModel.$setViewValue(scope.val);
+      }
+      ngModel.$viewChangeListeners.push(modelChanged);
+
 			scope.focus = function () {
 				scope.focused = true;
 			};
@@ -150,7 +179,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinDown()" ng-mouseup="stopSpin()"><i class="fa fa-minus"></i></button>' +
 		'  </span>' +
 		'  <span class="input-group-addon" ng-show="prefix" ng-bind="prefix"></span>' +
-		'  <input type="text" ng-model="val" class="form-control" ng-blur="checkValue()" ng-focus="focus()">' +
+		'  <input type="text" ng-model="val" class="form-control" ng-change="updateValue()" ng-focus="focus()">' +
 		'  <span class="input-group-addon" ng-show="postfix" ng-bind="postfix"></span>' +
 		'  <span class="input-group-btn" ng-show="!verticalButtons">' +
 		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinUp()" ng-mouseup="stopSpin()"><i class="fa fa-plus"></i></button>' +
