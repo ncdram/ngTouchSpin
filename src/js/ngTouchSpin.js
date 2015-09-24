@@ -115,14 +115,14 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 				scope.focused = false;
 			};
 
-      scope.updateValue = function  () {
+      scope.updateValue = function () {
         var newValue = scope.val;
 
         if (newValue !== '') {
           if (newValue.match(/^-?(?:\d+|\d*\.\d+)$/i)) {
             newValue = parseFloat(newValue);
-            if (newValue < parseFloat(scope.min)) newValue = parseFloat(scope.min);
-            if (newValue > parseFloat(scope.max)) newValue = parseFloat(scope.max);
+            if (newValue < scope.min) newValue = scope.min;
+            if (newValue > scope.max) newValue = scope.max;
             newValue = newValue.toFixed(scope.decimals);
           } else {
             newValue = oldval;
@@ -130,8 +130,17 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
           scope.val = newValue;
           ngModel.$setViewValue(newValue);
         }
+      };
 
-        console.log({newValue: newValue, val: scope.val, modelValue: ngModel.$modelValue});
+      scope.handleEmptyValue = function () {
+        var newValue = scope.val;
+
+        if (newValue === '' && attrs.value) {
+          newValue = attrs.value;
+        }
+
+        scope.val = newValue;
+        ngModel.$setViewValue(newValue);
       };
 
       /**
@@ -139,7 +148,6 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
        * Change it back into the current value if it does!
        */
       function modelChanged() {
-        console.log({modelValue: ngModel.$modelValue, val: scope.val});
         if (ngModel.$modelValue == '' && scope.val) ngModel.$setViewValue(scope.val);
       }
       ngModel.$viewChangeListeners.push(modelChanged);
@@ -179,7 +187,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinDown()" ng-mouseup="stopSpin()"><i class="fa fa-minus"></i></button>' +
 		'  </span>' +
 		'  <span class="input-group-addon" ng-show="prefix" ng-bind="prefix"></span>' +
-		'  <input type="text" ng-model="val" class="form-control" ng-change="updateValue()" ng-focus="focus()">' +
+		'  <input type="text" ng-model="val" class="form-control" ng-change="updateValue()" ng-blur="handleEmptyValue()" ng-focus="focus()">' +
 		'  <span class="input-group-addon" ng-show="postfix" ng-bind="postfix"></span>' +
 		'  <span class="input-group-btn" ng-show="!verticalButtons">' +
 		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinUp()" ng-mouseup="stopSpin()"><i class="fa fa-plus"></i></button>' +
