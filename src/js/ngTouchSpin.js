@@ -12,31 +12,47 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 		right : 39
 	};
 
-	var setScopeValues = function (scope, attrs) {
-		scope.min = parseFloat(Number(attrs.min)) || 0;
-		scope.max = parseFloat(Number(attrs.max)) || 100;
-		scope.step = attrs.step || 1;
-		scope.prefix = attrs.prefix || undefined;
-		scope.postfix = attrs.postfix || undefined;
-		scope.decimals = attrs.decimals || 0;
-		scope.stepInterval = attrs.stepInterval || 100;
-		scope.stepIntervalDelay = attrs.stepIntervalDelay || 500;
-		scope.initval = attrs.initval || '';
-		scope.val = attrs.value || scope.initval;
-	};
-
 	return {
 		restrict: 'EA',
 		require: '?ngModel',
-		scope: true,
+		scope: {
+			min: '=?',
+			max: '=?',
+			step: '=?',
+			prefix: '=?',
+			postfix: '=?',
+			decimals: '=?',
+			stepInterval: '=?',
+			stepIntervalDelay: '=?',
+			initval: '=?',
+			val: '=?',
+			onChange: '=?'
+		},
 		replace: true,
 		link: function (scope, element, attrs, ngModel) {
-			setScopeValues(scope, attrs);
+
+			initScope();
+
+			function initScope() {
+				scope.min = parseFloat(Number(scope.min)) || 0;
+				scope.max = parseFloat(Number(scope.max)) || 100;
+				scope.step = scope.step || 1;
+				scope.prefix = scope.prefix || undefined;
+				scope.postfix = scope.postfix || undefined;
+				scope.decimals = scope.decimals || 0;
+				scope.stepInterval = scope.stepInterval || 100;
+				scope.stepIntervalDelay = scope.stepIntervalDelay || 500;
+				scope.initval = scope.initval || '';
+				scope.val = scope.value || scope.initval;
+				scope.onChange = scope.onChange || function() {};
+			}
 
 			var $body = $document.find('body');
 			var timeout, timer, helper = true, oldval = scope.val, clickStart;
 
 			ngModel.$setViewValue(scope.val);
+			scope.onChange(scope.val);
+
 			scope.focused = false;
 
 			scope.decrement = function () {
@@ -52,6 +68,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 
 				scope.val = value;
 				ngModel.$setViewValue(value);
+				scope.onChange(scope.val);
 			};
 
 			scope.increment = function () {
@@ -62,6 +79,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 
 				scope.val = value;
 				ngModel.$setViewValue(value);
+				scope.onChange(scope.val);
 			};
 
 			scope.startSpinUp = function () {
@@ -129,6 +147,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
           }
           scope.val = newValue;
           ngModel.$setViewValue(newValue);
+			scope.onChange(scope.val);
         }
       };
 
@@ -141,6 +160,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
 
         scope.val = newValue;
         ngModel.$setViewValue(newValue);
+	  	scope.onChange(scope.val);
       };
 
       /**
@@ -181,7 +201,7 @@ function ngTouchSpinDirective($timeout, $interval, $document, ngTouchSpin) {
       }
 
 		},
-		template: 
+		template:
 		'<div class="input-group">' +
 		'  <span class="input-group-btn" ng-show="!verticalButtons">' +
 		'    <button type="button" class="btn btn-default" ng-mousedown="startSpinDown()" ng-mouseup="stopSpin()"><i class="fa fa-minus"></i></button>' +
