@@ -37,8 +37,7 @@ function ngTouchSpinDirective($timeout, $interval, $document) {
         scope.decimals = parseInt(scope.decimals) || 0;
         scope.stepInterval = scope.stepInterval || 100;
         scope.stepIntervalDelay = scope.stepIntervalDelay || 500;
-        scope.initval = scope.initval || '';
-        scope.val = scope.value || scope.initval;
+        scope.val = parseFloat(scope.initval).toFixed(scope.decimals);
         scope.onChange = scope.onChange || function() {};
       }
 
